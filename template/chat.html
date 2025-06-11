@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PropTech AI Assistant - Chat</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            min-height: 100vh; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .chat-container {
+            height: 85vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+        .chat-header::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: white;
+            border-radius: 20px 20px 0 0;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px;
+            background: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .message {
+            display: flex;
+            align-items: flex-start;
+            animation: slideIn 0.3s ease-out;
+        }
+        .message.user {
+            justify-content: flex-end;
+        }
+        .message.bot {
+            justify-content: flex-start;
+        }
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin: 0 10px;
+            flex-shrink: 0;
+        }
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            order: 2;
+        }
+        .message.bot .message-avatar {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+        .message-content {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 20px;
+            word-wrap: break-word;
+            line-height: 1.5;
+            position: relative;
+        }
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        .message.bot .message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .message-time {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+        .chat-input-container {
+            padding: 25px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .typing-indicator .message-avatar {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+        .typing-dots {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            border-bottom-left-radius: 5px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+        .typing-dots span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #999;
+            animation: typing 1.4s infinite;
+        }
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-8px); opacity: 1; }
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .quick-action {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border: 2px solid #2196f3;
+            color: #1976d2;
+            padding: 10px 15px;
+            border-radius: 25px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        .quick-action:hover {
+            background: linear-gradient(135deg, #2196f3, #1976d2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
+        }
+        .input-group {
+            position: relative;
+        }
+        .form-control {
+            border-radius: 25px;
+            border: 2px solid #e0e0e0;
+            padding: 15px 60px 15px 20px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .send-btn {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .send-btn:hover {
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .send-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .chat-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        .welcome-message {
+            background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
+            border: 2px solid #28a745;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+        .feature-list li {
+            padding: 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .feature-list li::before {
+            content: '✨';
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <!-- Navigation -->
+                <div class="text-center mb-4">
+                    <a href="/" class="btn btn-outline-light me-3">
+                        <i class="fas fa-home me-2"></i>Back to Dashboard
+                    </a>
+                    <a href="/roi-heatmap" class="btn btn-outline-light me-3">
+                        <i class="fas fa-fire me-2"></i>Heat Map
+                    </a>
+                    <a href="/investment-calculator" class="btn btn-outline-light">
+                        <i class="fas fa-calculator me-2"></i>Investment Calculator
+                    </a>
+                </div>
+                
+                <!-- Chat Container -->
+                <div class="chat-container">
+                    <!-- Chat Header -->
+                    <div class="chat-header">
+                        <div class="d-flex align-items-center justify-content-center gap-3">
+                            <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px;">
+                                🤖
+                            </div>
+                            <div>
+                                <h3 class="mb-1">PropTech AI Assistant</h3>
+                                <p class="mb-0 opacity-75">Your intelligent real estate investment advisor</p>
+                            </div>
+                        </div>
+                        <div class="chat-status">
+                            <div class="status-indicator"></div>
+                            <span>Online & Ready to Help</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Messages -->
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- Welcome Message -->
+                        <div class="welcome-message">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #28a745, #20c997); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+                                    🤖
+                                </div>
+                                <div>
+                                    <h5 class="mb-1 text-success">Welcome to PropTech AI! 👋</h5>
+                                    <small class="text-muted">Powered by advanced ML algorithms</small>
+                                </div>
+                            </div>
+                            
+                            <p class="mb-3"><strong>I'm your intelligent real estate assistant.</strong> I can help you with:</p>
+                            
+                            <ul class="feature-list">
+                                <li>📊 ROI calculations and analysis for any Mumbai locality</li>
+                                <li>🏠 Detailed locality information and market insights</li>
+                                <li>⚖️ Compare different areas side-by-side</li>
+                                <li>💰 Personalized investment advice based on your budget</li>
+                                <li>📈 Market trends and future predictions</li>
+                                <li>💳 EMI calculations and loan planning</li>
+                                <li>🎯 Risk assessment and recommendations</li>
+                            </ul>
+                            
+                            <div class="alert alert-info mt-3 mb-0">
+                                <strong>💡 Try asking:</strong> "Calculate ROI for ₹50L property in Andheri" or "Compare Bandra and Powai"
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Actions -->
+                        <div class="quick-actions">
+                            <span class="quick-action" onclick="sendQuickMessage('Calculate ROI for ₹50L in Andheri')">
+                                📊 Sample ROI Calculation
+                            </span>
+                            <span class="quick-action" onclick="sendQuickMessage('Compare Bandra and Powai')">
+                                ⚖️ Compare Areas
+                            </span>
+                            <span class="quick-action" onclick="sendQuickMessage('Investment advice for ₹1 crore budget')">
+                                💡 Investment Advice
+                            </span>
+                            <span class="quick-action" onclick="sendQuickMessage('Market trends in Mumbai')">
+                                📈 Market Trends
+                            </span>
+                            <span class="quick-action" onclick="sendQuickMessage('EMI for ₹80L at 8.5% for 20 years')">
+                                💳 EMI Calculator
+                            </span>
+                            <span class="quick-action" onclick="sendQuickMessage('Tell me about Powai locality')">
+                                🏠 Locality Info
+                            </span>
+                            <span class="quick-action" onclick="sendQuickMessage('Help me understand the features')">
+                                ❓ Help & Features
+                            </span>
+                        </div>
+                        
+                        <!-- Typing Indicator -->
+                        <div class="typing-indicator" id="typingIndicator">
+                            <div class="message-avatar">
+                                🤖
+                            </div>
+                            <div class="typing-dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Input -->
+                    <div class="chat-input-container">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="messageInput" 
+                                   placeholder="Ask me about Mumbai real estate, ROI calculations, market trends..." 
+                                   onkeypress="handleKeyPress(event)">
+                            <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="text-center mt-2">
+                            <small class="text-muted">
+                                <i class="fas fa-shield-alt me-1"></i>
+                                Powered by PropTech ML • Your data is secure
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const sendBtn = document.getElementById('sendBtn');
+        
+        let isTyping = false;
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+        
+        function sendQuickMessage(message) {
+            messageInput.value = message;
+            sendMessage();
+        }
+        
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message || isTyping) return;
+            
+            // Add user message to chat
+            addMessage(message, 'user');
+            messageInput.value = '';
+            
+            // Show typing indicator
+            showTyping();
+            
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+                
+                const data = await response.json();
+                
+                // Hide typing indicator
+                hideTyping();
+                
+                if (data.status === 'success') {
+                    // Add bot response with delay for natural feel
+                    setTimeout(() => {
+                        addMessage(data.response, 'bot');
+                    }, 500);
+                } else {
+                    addMessage('Sorry, I encountered an error. Please try again.', 'bot', true);
+                }
+            } catch (error) {
+                hideTyping();
+                addMessage('Sorry, I\'m having trouble connecting. Please check your internet connection and try again.', 'bot', true);
+            }
+        }
+        
+        function addMessage(content, sender, isError = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            if (sender === 'user') {
+                messageDiv.innerHTML = `
+                    <div class="message-content">
+                        ${escapeHtml(content)}
+                        <div class="message-time">${currentTime}</div>
+                    </div>
+                    <div class="message-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                `;
+            } else {
+                const errorClass = isError ? 'error-message' : '';
+                const formattedContent = formatBotMessage(content);
+                
+                messageDiv.innerHTML = `
+                    <div class="message-avatar">
+                        🤖
+                    </div>
+                    <div class="message-content ${errorClass}">
+                        ${formattedContent}
+                        <div class="message-time">${currentTime}</div>
+                    </div>
+                `;
+            }
+            
+            // Insert before typing indicator
+            chatMessages.insertBefore(messageDiv, typingIndicator);
+            scrollToBottom();
+        }
+        
+        function formatBotMessage(content) {
+            // Convert markdown-like formatting to HTML
+            let formatted = content
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/\n/g, '<br>')
+                .replace(/🔗 \[(.*?)\]\((.*?)\)/g, '<a href="$2" class="btn btn-sm btn-outline-primary mt-2" target="_blank">$1</a>');
+            
+            return formatted;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function showTyping() {
+            isTyping = true;
+            typingIndicator.style.display = 'flex';
+            sendBtn.disabled = true;
+            scrollToBottom();
+        }
+        
+        function hideTyping() {
+            isTyping = false;
+            typingIndicator.style.display = 'none';
+            sendBtn.disabled = false;
+        }
+        
+        function scrollToBottom() {
+            setTimeout(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 100);
+        }
+        
+        // Auto-focus on input
+        messageInput.focus();
+        
+        // Add some sample conversation starters after page load
+        setTimeout(() => {
+            const starters = [
+                "Try: 'Calculate ROI for ₹60L in Thane'",
+                "Ask: 'Which is better - Andheri or Malad?'",
+                "Query: 'Investment advice for ₹80 lakhs'"
+            ];
+            
+            messageInput.placeholder = starters[Math.floor(Math.random() * starters.length)];
+        }, 3000);
+        
+        // Rotate placeholder text
+        setInterval(() => {
+            const placeholders = [
+                "Ask me about Mumbai real estate...",
+                "Calculate ROI for any locality...",
+                "Compare different areas...",
+                "Get investment advice...",
+                "Market trends and insights..."
+            ];
+            messageInput.placeholder = placeholders[Math.floor(Math.random() * placeholders.length)];
+        }, 5000);
+    </script>
+</body>
+</html>

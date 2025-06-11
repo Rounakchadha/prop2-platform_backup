@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}Investment Analysis - PropTech ML Platform{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-12">
+        <!-- Investment Summary Header -->
+        <div class="result-card card mb-4">
+            <div class="card-body text-center py-4">
+                <h2 class="text-white mb-3">
+                    <i class="fas fa-chart-line me-2"></i>Investment Analysis for {{ analysis.locality }}
+                </h2>
+                <div class="row">
+                    <div class="col-md-3">
+                        <h5 class="text-white-50">Property Value</h5>
+                        <h4 class="text-white">₹{{ analysis.property_price }} L</h4>
+                    </div>
+                    <div class="col-md-3">
+                        <h5 class="text-white-50">Down Payment</h5>
+                        <h4 class="text-white">₹{{ analysis.down_payment }} L</h4>
+                    </div>
+                    <div class="col-md-3">
+                        <h5 class="text-white-50">Monthly EMI</h5>
+                        <h4 class="text-warning">₹{{ analysis.monthly_emi }}</h4>
+                    </div>
+                    <div class="col-md-3">
+                        <h5 class="text-white-50">Expected ROI</h5>
+                        <h4 class="text-success">{{ analysis.annual_roi }}%</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-money-bill-wave text-success mb-2" style="font-size: 2rem;"></i>
+                        <h5>Monthly Cash Flow</h5>
+                        <h3 class="{% if analysis.monthly_cash_flow >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            ₹{{ analysis.monthly_cash_flow }}
+                        </h3>
+                        <small class="text-muted">Rent - EMI - Maintenance</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-calendar-check text-primary mb-2" style="font-size: 2rem;"></i>
+                        <h5>Break-even Period</h5>
+                        <h3 class="text-primary">
+                            {% if analysis.break_even_years %}
+                                {{ analysis.break_even_years }} Years
+                            {% else %}
+                                Never
+                            {% endif %}
+                        </h3>
+                        <small class="text-muted">Time to recover investment</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-home text-info mb-2" style="font-size: 2rem;"></i>
+                        <h5>Monthly Rent</h5>
+                        <h3 class="text-info">₹{{ analysis.estimated_monthly_rent }}</h3>
+                        <small class="text-muted">Expected rental income</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-tools text-warning mb-2" style="font-size: 2rem;"></i>
+                        <h5>Monthly Maintenance</h5>
+                        <h3 class="text-warning">₹{{ analysis.monthly_maintenance }}</h3>
+                        <small class="text-muted">Estimated upkeep costs</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Breakdown -->
+        <div class="row">
+            <!-- Loan Details -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-university me-2"></i>Loan Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <div class="metric-card">
+                                    <div class="metric-value">₹{{ analysis.loan_amount }}L</div>
+                                    <div class="metric-label">Loan Amount</div>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="metric-card">
+                                    <div class="metric-value">{{ analysis.horizon }} Years</div>
+                                    <div class="metric-label">Loan Tenure</div>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="metric-card">
+                                    <div class="metric-value">{{ analysis.interest_rate }}%</div>
+                                    <div class="metric-label">Interest Rate</div>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="metric-card">
+                                    <div class="metric-value">₹{{ analysis.total_interest }}L</div>
+                                    <div class="metric-label">Total Interest</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk & Recommendation -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Risk Assessment</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <div class="progress mb-3" style="height: 20px;">
+                                <div class="progress-bar 
+                                    {% if analysis.risk_score < 30 %}bg-success
+                                    {% elif analysis.risk_score < 60 %}bg-warning
+                                    {% else %}bg-danger{% endif %}" 
+                                    style="width: {{ analysis.risk_score }}%">
+                                    {{ analysis.risk_score }}%
+                                </div>
+                            </div>
+                            <h4 class="
+                                {% if analysis.risk_score < 30 %}text-success
+                                {% elif analysis.risk_score < 60 %}text-warning
+                                {% else %}text-danger{% endif %}">
+                                {% if analysis.risk_score < 30 %}Low Risk
+                                {% elif analysis.risk_score < 60 %}Medium Risk
+                                {% else %}High Risk{% endif %}
+                            </h4>
+                        </div>
+                        
+                        <div class="text-center">
+                            <span class="badge 
+                                {% if analysis.recommendation == 'Highly Recommended' %}bg-success
+                                {% elif analysis.recommendation == 'Recommended' %}bg-primary
+                                {% elif analysis.recommendation == 'Consider with Caution' %}bg-warning
+                                {% else %}bg-danger{% endif %} 
+                                fs-6 p-3">
+                                {{ analysis.recommendation }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cash Flow Chart -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-area me-2"></i>Monthly Cash Flow Breakdown</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="cashFlowChart" height="100"></canvas>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="text-center mt-4">
+            <a href="{{ url_for('investment_calculator') }}" class="btn btn-outline-primary me-3">
+                <i class="fas fa-redo me-2"></i>New Calculation
+            </a>
+            <a href="{{ url_for('roi_calculator') }}" class="btn btn-primary me-3">
+                <i class="fas fa-calculator me-2"></i>ROI Calculator
+            </a>
+            <a href="{{ url_for('market_comparison') }}" class="btn btn-success">
+                <i class="fas fa-balance-scale me-2"></i>Compare Markets
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Cash Flow Breakdown Chart
+const ctx = document.getElementById('cashFlowChart').getContext('2d');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Monthly Rent', 'Monthly EMI', 'Maintenance', 'Net Cash Flow'],
+        datasets: [{
+            label: 'Amount (₹)',
+            data: [
+                {{ analysis.estimated_monthly_rent }}, 
+                -{{ analysis.monthly_emi }}, 
+                -{{ analysis.monthly_maintenance }}, 
+                {{ analysis.monthly_cash_flow }}
+            ],
+            backgroundColor: [
+                'rgba(39, 174, 96, 0.8)',   // Green for income
+                'rgba(231, 76, 60, 0.8)',    // Red for EMI
+                'rgba(243, 156, 18, 0.8)',   // Orange for maintenance
+                '{{ "rgba(39, 174, 96, 0.8)" if analysis.monthly_cash_flow >= 0 else "rgba(231, 76, 60, 0.8)" }}'  // Green/Red for net
+            ],
+            borderColor: [
+                'rgba(39, 174, 96, 1)',
+                'rgba(231, 76, 60, 1)',
+                'rgba(243, 156, 18, 1)',
+                '{{ "rgba(39, 174, 96, 1)" if analysis.monthly_cash_flow >= 0 else "rgba(231, 76, 60, 1)" }}'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            },
+            title: {
+                display: true,
+                text: 'Monthly Cash Flow Analysis'
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Amount (₹)'
+                }
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

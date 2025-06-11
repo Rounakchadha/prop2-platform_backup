@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}Investment Calculator - PropTech ML Platform{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0"><i class="fas fa-coins me-2"></i>Advanced Investment Calculator</h4>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-4">
+                    Get comprehensive investment analysis including EMI calculations, cash flow projections, and ROI analysis.
+                </p>
+                
+                <form method="POST" id="investmentForm">
+                    <div class="row">
+                        <!-- Basic Investment Details -->
+                        <div class="col-md-6 mb-3">
+                            <label for="locality" class="form-label fw-bold">
+                                <i class="fas fa-map-marker-alt me-1"></i>Locality
+                            </label>
+                            <select class="form-select" id="locality" name="locality" required>
+                                <option value="">Select Locality</option>
+                                {% for locality in localities %}
+                                    <option value="{{ locality }}">{{ locality.title() }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="budget" class="form-label fw-bold">
+                                <i class="fas fa-rupee-sign me-1"></i>Property Budget (₹ Lakhs)
+                            </label>
+                            <input type="number" class="form-control" id="budget" name="budget" 
+                                   step="0.01" min="1" placeholder="e.g., 100.00" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="investment_horizon" class="form-label fw-bold">
+                                <i class="fas fa-calendar-alt me-1"></i>Loan Duration (Years)
+                            </label>
+                            <select class="form-select" id="investment_horizon" name="investment_horizon" required>
+                                <option value="">Select Duration</option>
+                                <option value="5">5 Years</option>
+                                <option value="10">10 Years</option>
+                                <option value="15">15 Years</option>
+                                <option value="20">20 Years</option>
+                                <option value="25">25 Years</option>
+                                <option value="30">30 Years</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="risk_tolerance" class="form-label fw-bold">
+                                <i class="fas fa-shield-alt me-1"></i>Risk Tolerance
+                            </label>
+                            <select class="form-select" id="risk_tolerance" name="risk_tolerance" required>
+                                <option value="">Select Risk Level</option>
+                                <option value="low">Conservative (Low Risk)</option>
+                                <option value="medium">Moderate (Medium Risk)</option>
+                                <option value="high">Aggressive (High Risk)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Options (Collapsible) -->
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <button class="btn btn-link text-decoration-none p-0" type="button" 
+                                        data-bs-toggle="collapse" data-bs-target="#advancedOptions">
+                                    <i class="fas fa-cog me-2"></i>Advanced Options (Optional)
+                                    <i class="fas fa-chevron-down ms-2"></i>
+                                </button>
+                            </h6>
+                        </div>
+                        <div class="collapse" id="advancedOptions">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label for="down_payment" class="form-label">Down Payment (%)</label>
+                                        <input type="number" class="form-control" id="down_payment" 
+                                               name="down_payment" value="20" min="10" max="100" step="5">
+                                        <small class="text-muted">Default: 20%</small>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="interest_rate" class="form-label">Interest Rate (%)</label>
+                                        <input type="number" class="form-control" id="interest_rate" 
+                                               name="interest_rate" value="8.5" min="1" max="20" step="0.1">
+                                        <small class="text-muted">Default: 8.5%</small>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="maintenance" class="form-label">Maintenance (%)</label>
+                                        <input type="number" class="form-control" id="maintenance" 
+                                               name="maintenance" value="2" min="0.5" max="10" step="0.5">
+                                        <small class="text-muted">% of property value annually</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-calculator me-2"></i>Calculate Investment Details
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Info Section -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <h6 class="card-title text-success">
+                    <i class="fas fa-info-circle me-2"></i>What You'll Get
+                </h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>EMI and loan calculations</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Monthly cash flow analysis</li>
+                            <li><i class="fas fa-check text-success me-2"></i>ROI projections</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Break-even analysis</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Risk assessment</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Investment recommendations</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('investmentForm').addEventListener('submit', function(e) {
+    const submitBtn = this.querySelector('button[type="submit"]');
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Calculating...';
+    submitBtn.disabled = true;
+});
+
+// Update budget display
+document.getElementById('budget').addEventListener('input', function() {
+    const budget = parseFloat(this.value);
+    if (budget) {
+        const crores = budget / 100;
+        if (crores >= 1) {
+            this.setAttribute('title', `₹${crores.toFixed(2)} Crores`);
+        }
+    }
+});
+</script>
+{% endblock %}
