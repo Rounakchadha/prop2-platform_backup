@@ -1,0 +1,59 @@
+<!-- templates/roi_predict.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ROI Predictor</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f2f7fc;
+      padding: 40px;
+    }
+    .form-container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+    .result-box {
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 10px;
+      background: #e3f2fd;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h3 class="text-center mb-4">📊 ROI Predictor</h3>
+
+    {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST">
+      <div class="mb-3">
+        <label for="locality" class="form-label">Locality</label>
+        <input type="text" class="form-control" name="locality" id="locality" required>
+      </div>
+      <div class="mb-3">
+        <label for="price" class="form-label">Property Price (INR)</label>
+        <input type="number" class="form-control" name="price" id="price" required>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Predict ROI</button>
+    </form>
+
+    {% if prediction %}
+    <div class="result-box mt-4">
+      <h5>✅ Prediction Result:</h5>
+      <p><strong>Locality:</strong> {{ prediction.locality }}</p>
+      <p><strong>Price:</strong> ₹{{ "{:,.0f}".format(prediction.price) }}</p>
+      <p><strong>Predicted ROI:</strong> {{ prediction.roi }}%</p>
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>

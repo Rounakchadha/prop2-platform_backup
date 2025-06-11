@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🏙️ PropTech Mumbai</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .card {
+      border-radius: 10px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container mt-5">
+    <h2 class="text-center mb-4">🏙️ PropTech Mumbai</h2>
+    <p class="text-center text-muted">Explore powerful real estate tools to guide your investment decisions.</p>
+
+    <div class="row justify-content-center mt-4">
+      <!-- Predict ROI -->
+      <div class="col-md-3 mb-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-body text-center">
+            <h5 class="card-title">📈 Predict ROI</h5>
+            <p class="card-text">Estimate return on investment for a specific locality and price.</p>
+            <a href="/predict_roi" class="btn btn-primary">Go to ROI Tool</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Investment Calculator -->
+      <div class="col-md-3 mb-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-body text-center">
+            <h5 class="card-title">💰 Investment Calculator</h5>
+            <p class="card-text">Analyze EMI, rent income, ROI, and repayment for your property.</p>
+            <a href="/investment" class="btn btn-success">Open Calculator</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Market Comparison -->
+      <div class="col-md-3 mb-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-body text-center">
+            <h5 class="card-title">📊 Market Comparison</h5>
+            <p class="card-text">Compare two Mumbai localities based on price, rent, and ROI.</p>
+            <a href="/compare" class="btn btn-info text-white">Compare Markets</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROI Heatmap -->
+      <div class="col-md-3 mb-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-body text-center">
+            <h5 class="card-title">🗺️ ROI Heatmap</h5>
+            <p class="card-text">Visualize ROI across Mumbai regions based on rental and price trends.</p>
+            <a href="/heatmap" class="btn btn-warning text-white">View Heatmap</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Investment Results</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+  <div class="container mt-5">
+    <h2 class="text-center mb-4">📊 Investment Summary</h2>
+
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">💰 Property Price: ₹{{ "{:,.0f}".format(result.price) }}</li>
+          <li class="list-group-item">🏦 Down Payment: ₹{{ "{:,.0f}".format(result.down_payment) }}</li>
+          <li class="list-group-item">📉 Loan Amount: ₹{{ "{:,.0f}".format(result.loan) }}</li>
+          <li class="list-group-item">📆 Monthly EMI: ₹{{ "{:,.0f}".format(result.emi) }}</li>
+          <li class="list-group-item">📈 Total Interest Paid: ₹{{ "{:,.0f}".format(result.interest) }}</li>
+          <li class="list-group-item">💳 Total Repayment: ₹{{ "{:,.0f}".format(result.repayment) }}</li>
+          <li class="list-group-item">🏠 Annual Rental Income: ₹{{ "{:,.0f}".format(result.annual_rent) }}</li>
+          <li class="list-group-item">📊 ROI: {{ "%.2f" | format(result.roi) }}%</li>
+        </ul>
+        <div class="mt-4 text-center">
+          <a href="/investment" class="btn btn-primary">🔁 Try Again</a>
+          <a href="/" class="btn btn-secondary">🏠 Home</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
